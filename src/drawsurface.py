@@ -3,14 +3,13 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import re
 
+#Text and arguments processing to retrieve data from C++ script
 x_guide = []
 y_guide = []
 z_guide = []
-
 x_gene = []
 y_gene = []
 z_gene = []
-
 pt_x = []
 pt_y = []
 pt_z = []
@@ -51,10 +50,12 @@ for arg in sys.argv:
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-
+#display generatrix points
 ax.scatter(x_gene, y_gene, z_gene, marker='o', c='b')
+#display control points
 ax.scatter(pt_x, pt_y, pt_z, marker='o', c='r')
-print(x_gene)
+
+#display surface
 nbguide = int(len(x_guide)/col)
 nbgene = int(len(x_gene)/nbguide)
 for i in range(nbguide):
@@ -75,7 +76,6 @@ for i in range(nbgene):
         y.append(y_gene[i+nbgene*j])
         z.append(z_gene[i+nbgene*j])
         ax.plot(x, y ,z, c='b')
-
 
 ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)

@@ -4,11 +4,11 @@ import numpy as np
 import sys
 import re
 
+#Text and arguments processing to retrieve data from C++ script
 x_coordinates = []
 y_coordinates = []
 pt_x = []
 pt_y = []
-
 for arg in sys.argv:
     if (re.search('\d+', arg)):
         points = arg.split('+')
@@ -30,8 +30,9 @@ for arg in sys.argv:
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-
+#display control points
 ax.scatter(pt_x, pt_y, c='r', marker='o')
+#display curve
 ax.plot(x_coordinates, y_coordinates, c ='b')
 ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)

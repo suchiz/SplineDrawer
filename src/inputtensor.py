@@ -9,6 +9,7 @@ y = []
 z = []
 points = []
 
+#retrieve coordinates and display control points
 def onclick(event):
     s = gety(event.xdata, event.ydata)
     s = s.replace(" ", "")
@@ -22,6 +23,7 @@ def onclick(event):
     z.append(float(pt_z))
     ax.scatter(x, y, z, c='r', marker='o')
     fig.canvas.draw()
+
 
 def gety(x,y):
     # store the current mousebutton
@@ -38,7 +40,8 @@ ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)
 ax.set_zlim(0, 10)
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
-
 plt.show()
+
+#send data to C++ script
 for p in points:
     print(p)
