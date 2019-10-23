@@ -9,20 +9,16 @@ TensorProduct::TensorProduct(std::vector<Point> controlPoints, std::pair<int, in
 }
 
 std::pair<std::vector<std::vector<Point>>, std::vector<std::vector<Point>>> TensorProduct::computePoint(float du, float dv){
-	std::vector<std::vector<Point>> guidelinesVect(this->size.first);
-	
+	std::vector<std::vector<Point>> guidelinesVect;
 	for (int i = 0; i < this->size.first; ++i){
 		BSpline guideSpline = BSpline(getGuidelinePoints(i), this->knotVectType, this->order);
-		for (float u = guideSpline.getDegree(); u < guideSpline.getNBControlPoints(); u+=du)
-			guidelinesVect[i].push_back(guideSpline.computePoint(u));
+		guidelinesVect.push_back(guideSpline.computePoint(du));
 	}
-	std::vector<std::vector<Point>> generatrixVect(guidelinesVect[0].size());
+	std::vector<std::vector<Point>> generatrixVect;
 	for (int i = 0; i < guidelinesVect[0].size(); ++i){
 		BSpline generatrixSpline = BSpline(getGeneratrixPoints(i, guidelinesVect), this->knotVectType, this->order);
-		for (float v = generatrixSpline.getDegree(); v < generatrixSpline.getNBControlPoints(); v+=dv)
-			generatrixVect[i].push_back(generatrixSpline.computePoint(v));
+		generatrixVect.push_back(generatrixSpline.computePoint(dv));
 	}
-	
 	return std::pair<std::vector<std::vector<Point>>, std::vector<std::vector<Point>>> {guidelinesVect, generatrixVect};
 }
 

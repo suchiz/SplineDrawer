@@ -28,7 +28,7 @@ public:
 	
 	//METHODS
 	void draw(float du);
-	Point computePoint(float u);
+	std::vector<Point>  computePoint(float du);
 	
 	//DEBUG
 	void printKnotVect();

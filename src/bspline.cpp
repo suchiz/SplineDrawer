@@ -13,35 +13,39 @@ void BSpline::checkParameters(){
 	assert(order > 1);
 }
 
-Point BSpline::computePoint(float u){
-	int offset = getIndexInterestPoint(u);
-	std::vector<Point> interestPointsVect;
-	
-	for (int i = 0; i < this->order; ++i) 
-		interestPointsVect.push_back(controlPointsVect[i+offset]);
-	
-	int k = this->order;
-	for (int j = 0; j < this->order-1; ++j){
-		for (int i = 0; i < k-1; ++i){
-			float denom = knotVect[offset+k+i] - knotVect[offset+1+i];
-			interestPointsVect[i] = interestPointsVect[i] * ((knotVect[offset+k+i] - u) / denom) + 
-							interestPointsVect[i+1] * ((u - knotVect[offset+1+i]) / denom);
-		}
-		--k;
-		++offset;
+std::vector<Point> BSpline::computePoint(float du){
+	std::vector<Point> calculatedPoints;
+	float start, end;
+	if (this->knotVectType == KVType::UNIFORM){
+		start = this->order-1;
+		end = getNBControlPoints();
+	} else if (this->knotVectType == KVType::OPEN_UNIFORM){
+		start = this->order-1 - getDegree();
+		end = getNBControlPoints() - getDegree();
 	}
- 	return interestPointsVect[0];
+	for (float u = start; u < end; u+=du){
+		int offset = getIndexInterestPoint(u);
+		std::vector<Point> interestPointsVect;
+		for (int i = 0; i < this->order; ++i) 
+			interestPointsVect.push_back(controlPointsVect[i+offset]);
+		
+		int k = this->order;
+		for (int j = 0; j < this->order-1; ++j){
+			for (int i = 0; i < k-1; ++i){
+				float denom = knotVect[offset+k+i] - knotVect[offset+1+i];
+				interestPointsVect[i] = interestPointsVect[i] * ((knotVect[offset+k+i] - u) / denom) + 
+								interestPointsVect[i+1] * ((u - knotVect[offset+1+i]) / denom);
+			}
+			--k;
+			++offset;
+		}
+		calculatedPoints.push_back(interestPointsVect[0]);
+	}
+	return calculatedPoints;
 }
 
 void BSpline::draw(float du){
-	std::vector<Point> curvePoints;
-	if (this->knotVectType == KVType::UNIFORM)
-		for (float u = this->order-1; u < getNBControlPoints(); u+=du)
-			curvePoints.push_back(computePoint(u));
-	else if (this->knotVectType == KVType::OPEN_UNIFORM)
-		for (float u = this->order-1-this->getDegree(); u < getNBControlPoints()-this->getDegree(); u+=du)
-			curvePoints.push_back(computePoint(u));
-		
+	std::vector<Point> curvePoints = computePoint(du);
 	std::stringstream ss;
 	ss << "python src/drawcurve.py ";
 	for (int i = 0; i < this->controlPointsVect.size(); ++i)
